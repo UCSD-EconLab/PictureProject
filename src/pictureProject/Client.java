@@ -150,8 +150,7 @@ public class Client {
 
 	}
 	/*
-	 * Function: sendStatus()
-	 * Description: Used to send client status to server through ObjectOutStream
+	 *  Used to send client status to server through ObjectOutStream
 	 */
 	public void sendStatus(Status st) {
 		try {

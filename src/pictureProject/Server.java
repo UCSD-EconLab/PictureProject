@@ -88,7 +88,8 @@ public class Server {
 		for(int i = 0; i < MAX_CLIENTS; i++){
 			if(clientIDs[i] != null){
 				System.out.println("ID:" + clientIDs[i] + "   STATUS: " + clientStatuses[i] );
-				clients[Integer.parseInt(clientIDs[i])] = "ID:" + clientIDs[i] + "   STATUS: " + clientStatuses[i];
+				clients[Integer.parseInt(clientIDs[i])] = "ID:" + clientIDs[i] + "   STATUS: " + clientStatuses[i] + 
+						"   TIME: " + clientTimes[i]/1000 + " sec";
 				for(int j = 0; j < 24; j++){
 					System.out.print(  "  AMOUNTS: "   +    clientAmts[i][j] + ", ");
 				}

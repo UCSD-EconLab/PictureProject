@@ -73,7 +73,9 @@ public class ClientGUI extends JFrame{
 		setLocationRelativeTo(null);
 		
 	
-		//construct first page
+		/*
+		 * Construct First Page
+		 */
 		firstpage = new JPanel();
 		add(firstpage);
 		firstpage.setLayout(new BoxLayout(firstpage, BoxLayout.Y_AXIS));
@@ -102,7 +104,9 @@ public class ClientGUI extends JFrame{
 		firstpage.setVisible(true);
 		
 		
-		///////////////////////////////////construct second page/////////////////////////////////
+		/*
+		 * Construct Second Page
+		 */
 		secondpage = new JPanel();
 		add(secondpage);
 		secondpage.setLayout(new BoxLayout(secondpage, BoxLayout.Y_AXIS));
@@ -127,46 +131,51 @@ public class ClientGUI extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				client.sendStatus(new Status("Second Page - Charity Credits"));//Update Status on server
+				client.sendStatus(new Status("Third Page - Charity Credits"));//Update Status on server
 				secondpage.setVisible(false);
 				thirdpage.setVisible(true);
 			}});
 		secondpage.setVisible(false);
 		
 		
-		////////////////////////////////////////construct third page///////////////////////////
-				thirdpage = new JPanel();
-				add(thirdpage);
-				thirdpage.setLayout(new BoxLayout(thirdpage, BoxLayout.Y_AXIS));
-				thirdpage.setPreferredSize(new Dimension(WIDTH,HEIGHT));
-				thirdpage.setBackground(Color.WHITE);
-				pack();
-				
-				JLabel gdpaul = new JLabel(new ImageIcon(getImage("img/Paul.png")));
-				thirdpage.add(Box.createVerticalStrut(HEIGHT/8));
-				thirdpage.add( gdpaul );
-				gdpaul.setAlignmentX(CENTER_ALIGNMENT);
-				
-				pTextQ = new JLabel("Please wait");
-				thirdpage.add(pTextQ);
-				pTextQ.setAlignmentX(CENTER_ALIGNMENT);
-				
-				
-				pTextBeginButton = new JButton("Next");
-				thirdpage.add(pTextBeginButton);
-				pTextBeginButton.setAlignmentX(CENTER_ALIGNMENT);
-				pTextBeginButton.addActionListener(new ActionListener() {
+		/*
+		 * Construct Third Page
+		 */
+		thirdpage = new JPanel();
+		add(thirdpage);
+		thirdpage.setLayout(new BoxLayout(thirdpage, BoxLayout.Y_AXIS));
+		thirdpage.setPreferredSize(new Dimension(WIDTH,HEIGHT));
+		thirdpage.setBackground(Color.WHITE);
+		pack();
+		
+		JLabel gdpaul = new JLabel(new ImageIcon(getImage("img/Paul.png")));
+		thirdpage.add(Box.createVerticalStrut(HEIGHT/8));
+		thirdpage.add( gdpaul );
+		gdpaul.setAlignmentX(CENTER_ALIGNMENT);
+		
+		pTextQ = new JLabel("Please wait");
+		thirdpage.add(pTextQ);
+		pTextQ.setAlignmentX(CENTER_ALIGNMENT);
+		
+		
+		pTextBeginButton = new JButton("Next");
+		thirdpage.add(pTextBeginButton);
+		pTextBeginButton.setAlignmentX(CENTER_ALIGNMENT);
+		pTextBeginButton.addActionListener(new ActionListener() {
 
-					public void actionPerformed(ActionEvent e) {
-						thirdpage.setVisible(false);
-						fourthpage.setVisible(true);
-						Date date = new Date();
-						client.begin= (new Timestamp(date.getTime())).getTime();
-					}});
+			public void actionPerformed(ActionEvent e) {
+				client.sendStatus(new Status("Fourth Page - Selecte a Donatee"));//Update Status on server
 				thirdpage.setVisible(false);
+				fourthpage.setVisible(true);
+				Date date = new Date();
+				client.begin= (new Timestamp(date.getTime())).getTime();
+			}});
+		thirdpage.setVisible(false);
 
 		
-		//construct fourth page
+		/*
+		 * Construct Forth Page
+		 */
 		fourthpage = new JPanel();
 		add(fourthpage);
 		fourthpage.setLayout(new BoxLayout(fourthpage, BoxLayout.Y_AXIS));
