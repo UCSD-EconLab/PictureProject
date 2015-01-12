@@ -28,7 +28,7 @@ public class Server {
 	 String clientStatuses[] = new String[MAX_CLIENTS];
 	 Float clientAmts[][] = new Float[MAX_CLIENTS][24];
 	 Float clientSingleAmts[] = new Float[MAX_CLIENTS];
-	 Long clientTimes[] = new Long[MAX_CLIENTS];
+	 Long clientTimes[] = new Long[MAX_CLIENTS]; //The time it takes to make a decision
 	 Long clientOpt3Times[][] = new Long [MAX_CLIENTS][24];
 	 Integer clientChosenPics[] = new Integer[MAX_CLIENTS];
 	 Integer clientChosenDecision[] = new Integer[MAX_CLIENTS];
@@ -52,7 +52,7 @@ public class Server {
 		gui = new ServerGUI(this);
 		//gui.initialize();
 		for(int i = 0; i < MAX_CLIENTS; i++){
-			clientStatuses[i] = "WORKING";
+			clientStatuses[i] = "CONNNECTED";
 		}
 		for(int i = 0; i < MAX_CLIENTS; i ++){
 	
@@ -60,7 +60,7 @@ public class Server {
 			si.sendInfo(clientAddress[i]);
 
 			fromclient[i] = new ObjectInputStream(clientAddress[i].getInputStream());
-		
+			
 			GetClientData gcd = new GetClientData(fromclient[i], this, i);
 			gcd.start();
 

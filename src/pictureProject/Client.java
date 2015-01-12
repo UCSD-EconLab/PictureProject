@@ -88,7 +88,7 @@ public class Client {
 		client.serverOut = new ObjectOutputStream(server.getOutputStream());
 		client.si.readInfo(client.server, client);
 
-		client.sendID(client.server);
+		client.sendID(client.server);		
 		client.clientGUI = new ClientGUI(client);
 	}
 
@@ -149,7 +149,18 @@ public class Client {
 		}
 
 	}
-
+	/*
+	 * Function: sendStatus()
+	 * Description: Used to send client status to server through ObjectOutStream
+	 */
+	public void sendStatus(Status st) {
+		try {
+			this.serverOut.writeObject(st);
+		} catch(IOException e){
+			System.err.println("Error Sending Status!");
+		}
+	}
+	
 	public void sendID(Socket server) {
 			try{
 			this.serverOut.writeObject(id);

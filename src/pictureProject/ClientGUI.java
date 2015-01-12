@@ -5,8 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.*;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.net.URL;
@@ -26,7 +28,7 @@ public class ClientGUI extends JFrame{
 	private float budget;
 	private int counter = 0;
 	private float sum = 0;
-	
+//	private float payment = 0;
 	
 	//main
 	JPanel fifthpage;
@@ -49,6 +51,7 @@ public class ClientGUI extends JFrame{
 	private JButton pTextBeginButton;
 	private JCheckBox CBoptionA;
 	private JCheckBox CBoptionB;
+	private ButtonGroup btnGroup;
 	
 	public ClientGUI(Client c)
 	{
@@ -82,7 +85,7 @@ public class ClientGUI extends JFrame{
 		firstpage.add(Box.createVerticalStrut(HEIGHT/2));
 		firstpage.add(pTextQ);
 		pTextQ.setAlignmentX(CENTER_ALIGNMENT);
-		
+		client.sendStatus(new Status("First Page - Begin"));//Update Status on server
 		pTextBeginButton = new JButton("Begin");
 		firstpage.add(pTextBeginButton);
 		pTextBeginButton.setAlignmentX(CENTER_ALIGNMENT);
@@ -92,6 +95,7 @@ public class ClientGUI extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				client.sendStatus(new Status("Second Page - Charity Intro"));//Update Status on server
 				firstpage.setVisible(false);
 				secondpage.setVisible(true);
 			}});
@@ -123,6 +127,7 @@ public class ClientGUI extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				client.sendStatus(new Status("Second Page - Charity Credits"));//Update Status on server
 				secondpage.setVisible(false);
 				thirdpage.setVisible(true);
 			}});
@@ -230,6 +235,7 @@ public class ClientGUI extends JFrame{
 						strtbtn.addActionListener(new ActionListener() {
 
 							public void actionPerformed(ActionEvent e) {
+								System.err.println("Timer Begins");
 								fourthpage.remove(pText2);
 								fourthpage.add(pText);
 								fourthpage.revalidate();
@@ -260,36 +266,64 @@ public class ClientGUI extends JFrame{
 						pText.add(Box.createVerticalStrut(168/3));
 						pText.add(pTextQ);
 						pTextQ.setAlignmentX(CENTER_ALIGNMENT);
-						ArrayList<String> dollarList = new ArrayList<String>();
-						int temp = (int)client.getBudget();
-						for(int i = 0; i <= temp; i++){
-							dollarList.add((new Integer(i)).toString());
-						}
-
-						ArrayList<String> centList = new ArrayList<String>();
-						for(int i = 0; i <= 9; i ++){
-							centList.add((new Integer(i)).toString() + "0");
-						}
-
-				  		pTextCB =  new JComboBox(dollarList.toArray());
-				  		pTextCB2 = new JComboBox(centList.toArray());
-				  		
+						
+//						ArrayList<String> dollarList = new ArrayList<String>();
+//						int temp = (int)client.getBudget();
+//						for(int i = 0; i <= temp; i++){
+//							dollarList.add((new Integer(i)).toString());
+//						}
+//
+//						ArrayList<String> centList = new ArrayList<String>();
+//						for(int i = 0; i <= 9; i ++){
+//							centList.add((new Integer(i)).toString() + "0");
+//						}
+//
+//				  		pTextCB =  new JComboBox(dollarList.toArray());
+//				  		pTextCB2 = new JComboBox(centList.toArray());
+//				  		
 				  		moneypanel = new JPanel();	
 				  		moneypanel.setBackground(Color.WHITE);
 				  		moneypanel.setAlignmentX(CENTER_ALIGNMENT);
-				  		JLabel dollarsign = new JLabel("$");
-				  		JLabel decimal = new JLabel(".");
+//				  		JLabel dollarsign = new JLabel("$");
+//				  		JLabel decimal = new JLabel(".");
+//				  		
+//				  		moneypanel.add(dollarsign);
+//				  		moneypanel.add(pTextCB);
+//				  		moneypanel.add(decimal);
+//				  		moneypanel.add(pTextCB2);
+						
+				  		btnGroup = new ButtonGroup();					
+	
+//						ArrayList<String> dollarList = new ArrayList<String>();
 				  		
-				  		moneypanel.add(dollarsign);
-				  		moneypanel.add(pTextCB);
-				  		moneypanel.add(decimal);
-				  		moneypanel.add(pTextCB2);
+				  		//Setup the Radio Buttons -Alex Gian
+						int temp = (int)client.getBudget();
+						for(int i = 0; i <= temp; i++){
+							JRadioButton tmpButton = new JRadioButton('$' + (new Integer(i)).toString());
+							tmpButton.setActionCommand((new Integer(i)).toString());
+							tmpButton.setVerticalTextPosition(JRadioButton.TOP);
+							tmpButton.setHorizontalTextPosition(JRadioButton.CENTER);
+							
+							btnGroup.add(tmpButton);
+							moneypanel.add(tmpButton);							
+						}
+						
 				  		pTextOKButton = new JButton("OK");
-				  		pTextOKButton.addActionListener(new ActionListener() {
+				  		pTextOKButton.addActionListener(new ActionListener() {				  			
+							
 
 							@Override
-							public void actionPerformed(ActionEvent e) {
-								client.setChosenPayment(Float.parseFloat(((String) pTextCB.getSelectedItem()).replace("$","")) + Float.parseFloat("."+(String) pTextCB2.getSelectedItem()));
+							public void actionPerformed(ActionEvent e) {								
+								Float payment = (float) 0;
+//								client.setChosenPayment(Float.parseFloat(((String) pTextCB.getSelectedItem()).replace("$","")) + Float.parseFloat("."+(String) pTextCB2.getSelectedItem()));
+ 							    
+								//Check for the selected button and get its value
+								if(btnGroup.getSelection() != null){
+ 							    	System.out.println("getSelected(): " + btnGroup.getSelection().getActionCommand());
+ 							    	payment = Float.parseFloat(btnGroup.getSelection().getActionCommand());
+ 							    }
+								
+								client.setChosenPayment(payment);
 								if(client.getChosenPayment() > budget){
 									JOptionPane.showMessageDialog(fourthpage, "You have exeeeded the budget of $"+budget+".", "Try Again", JOptionPane.INFORMATION_MESSAGE);
 									return;
@@ -309,6 +343,11 @@ public class ClientGUI extends JFrame{
 								pText.revalidate();
 								repaint();
 								client.sendData(1);
+							}
+
+							private Object selection() {
+								// TODO Auto-generated method stub
+								return null;
 							}});
 				  		
 				  		pText.add(Box.createVerticalGlue());

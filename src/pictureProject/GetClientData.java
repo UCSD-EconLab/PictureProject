@@ -29,8 +29,10 @@ class GetClientData extends Thread {
 			}
 			// start listening
 			while (null != (temp = in.readObject())) {
-
-				if(Float[].class.isInstance(temp)){
+				//Update the status of the client
+				if(Status.class.isInstance(temp)){
+					server.clientStatuses[index] = ((Status)temp).getStatus();
+				} else if(Float[].class.isInstance(temp)){
 					Float[] amts = (Float[]) temp;
 					for(int i =0; i < 24; i++){
 						server.clientAmts[index][i] = amts[i];
