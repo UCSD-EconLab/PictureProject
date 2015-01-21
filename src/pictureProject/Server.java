@@ -61,6 +61,7 @@ public class Server {
 
 			fromclient[i] = new ObjectInputStream(clientAddress[i].getInputStream());
 			
+			
 			GetClientData gcd = new GetClientData(fromclient[i], this, i);
 			gcd.start();
 
@@ -81,7 +82,22 @@ public class Server {
 			System.out.println(id);
 			clientIDs[index] = id;
 	}
-
+    
+	/*
+	 * Notifies all clients about a status change on the server
+	 * to prompt a page change on the client side
+	 */
+	public void notifyAllStatus(Server server) throws IOException{
+		for( int i = 0; i < server.MAX_CLIENTS; i++) {
+			if(server.clientAddress[i] != null) {
+				System.out.println("Notifying user " + i +" of status change.");
+			}
+		}
+	}
+	
+	/*
+	 * Updates the server GUI prompt
+	 */
 	public void update(){
 		
 		String[] clients = new String[MAX_CLIENTS];
@@ -90,9 +106,7 @@ public class Server {
 				System.out.println("ID:" + clientIDs[i] + "   STATUS: " + clientStatuses[i] );
 				String timeString = "N/A";
 				//Check time for null
-				if(clientTimes[i] != null) {
-					timeString = String.valueOf(clientTimes[i]);
-				}
+; i
 				
 				clients[Integer.parseInt(clientIDs[i])] = "ID:" + clientIDs[i] + "   STATUS: " + clientStatuses[i] + 
 						"   TIME: " + timeString + " sec";

@@ -126,7 +126,9 @@ public class Client {
 	public void setBudget(float budget) {
 		this.budget = budget;
 	}
-
+	/**
+	 * Handles data sending to the server
+	 */
 	public void sendData(int option) {
 
 		try{
@@ -152,7 +154,8 @@ public class Client {
 		}
 
 	}
-	/*
+	
+	/**
 	 *  Used to send client status to server through ObjectOutStream
 	 */
 	public void sendStatus(Status st) {
@@ -163,6 +166,17 @@ public class Client {
 		}
 	}
 	
+	/**
+	 * Set the page of the client or moves to next page
+	 */
+	public void nextPage() {
+		System.out.println("Going to Next Page");
+	}
+	
+	/**
+	 * Sends ID to server.
+	 * Note: Not used
+	 */
 	public void sendID(Socket server) {
 			try{
 			this.serverOut.writeObject(id);
