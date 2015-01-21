@@ -60,18 +60,21 @@ public class Server {
 			si.sendInfo(clientAddress[i]);
 
 			fromclient[i] = new ObjectInputStream(clientAddress[i].getInputStream());
-			
+			toclient[i] = new ObjectOutputStream(clientAddress[i].getOutputStream());
 			
 			GetClientData gcd = new GetClientData(fromclient[i], this, i);
 			gcd.start();
 
 		}	
+		
+		
 	}
 	
 
 	public static void main(String[] args)  throws IOException, ClassNotFoundException{
 
 		new Server();
+		
 
 	}
 
@@ -83,14 +86,16 @@ public class Server {
 			clientIDs[index] = id;
 	}
     
-	/*
+	/**
 	 * Notifies all clients about a status change on the server
 	 * to prompt a page change on the client side
+	 * TODO: Implement socket connection to send message to client
 	 */
-	public void notifyAllStatus(Server server) throws IOException{
-		for( int i = 0; i < server.MAX_CLIENTS; i++) {
-			if(server.clientAddress[i] != null) {
+	public void notifyAllStatus() throws IOException{
+		for( int i = 0; i < Server.MAX_CLIENTS; i++) {
+			if(this.clientAddress[i] != null) {
 				System.out.println("Notifying user " + i +" of status change.");
+				toclient[i].writeObject(new Status("Hello User: " + i));
 			}
 		}
 	}
@@ -106,7 +111,7 @@ public class Server {
 				System.out.println("ID:" + clientIDs[i] + "   STATUS: " + clientStatuses[i] );
 				String timeString = "N/A";
 				//Check time for null
-; i
+
 				
 				clients[Integer.parseInt(clientIDs[i])] = "ID:" + clientIDs[i] + "   STATUS: " + clientStatuses[i] + 
 						"   TIME: " + timeString + " sec";

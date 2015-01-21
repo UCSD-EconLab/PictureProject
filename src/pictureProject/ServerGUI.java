@@ -31,6 +31,7 @@ public class ServerGUI extends JFrame{
 	JList list;
 	JScrollPane pane;
 	JButton export;
+	JButton next;
 	
 	public ServerGUI(Server server){
 
@@ -82,6 +83,8 @@ public class ServerGUI extends JFrame{
         mainpanel.add(pane);
         
         export = new JButton("Export to CSV");
+        next = new JButton("Next Screen");
+  
         
         export.addActionListener(new ActionListener() {
 
@@ -295,14 +298,28 @@ public class ServerGUI extends JFrame{
 			}});
         
         
-        mainpanel.add(export);
+        next.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try{
+					thisServer.notifyAllStatus();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+        });
+        Box bh = Box.createHorizontalBox();
+        bh.add(export);
+        bh.add(Box.createHorizontalGlue());
+        bh.add(next);
         
+        mainpanel.add(bh);
         
         pack();
 		
 		mainpanel.setVisible(true);
 		setVisible(true);
-		
 	}
 	
 	

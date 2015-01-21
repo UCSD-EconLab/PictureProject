@@ -2,6 +2,7 @@ package pictureProject;
 
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -33,8 +34,11 @@ public class Client {
 	float budget;
 	Float chosenPayment;
 	ObjectOutputStream serverOut;
+	ObjectInputStream serverIn;
 	Float amts[] = new Float[24];
-
+	
+	
+	
 	/**
 	 * @return the chosenPayment
 	 */
@@ -93,6 +97,10 @@ public class Client {
 
 		client.sendID(client.server);		
 		client.clientGUI = new ClientGUI(client);
+		
+		client.serverIn = new ObjectInputStream(server.getInputStream());
+		GetServerData gsd = client.new GetServerData(client.serverIn,client);
+		gsd.start();
 	}
 
 
@@ -163,6 +171,38 @@ public class Client {
 			this.serverOut.writeObject(st);
 		} catch(IOException e){
 			System.err.println("Error Sending Status!");
+		}
+	}
+	
+	/**
+	 * TODO: Create Thread to listen to server changes
+	 */
+	private class GetServerData extends Thread{
+		private Client client;
+		private ObjectInputStream ois;
+		public GetServerData(ObjectInputStream in, Client c){
+			this.client = c;
+			this.ois = in;
+			System.out.println("GetServerData Thread Running...");
+		}
+		
+		public void run() {
+			Object temp;
+			try {
+				while (null != (temp = ois.readObject())) {
+					//Update the status of the client
+					if(Status.class.isInstance(temp)){
+						String statusString = ((Status)temp).getStatus();
+						System.out.println("Status from server: " + statusString);
+					} 
+				}
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
