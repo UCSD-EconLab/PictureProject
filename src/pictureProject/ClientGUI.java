@@ -93,7 +93,7 @@ public class ClientGUI extends JFrame{
 		firstpage.setBackground(Color.WHITE);
 		pack();
 		
-		pTextQ = new JLabel("Please wait for instructions");// before you press \"Begin\"");
+		pTextQ = new JLabel("Please wait for instructions.");// before you press \"Begin\"");
 		firstpage.add(Box.createVerticalStrut(HEIGHT/2));
 		firstpage.add(pTextQ);
 		pTextQ.setAlignmentX(CENTER_ALIGNMENT);

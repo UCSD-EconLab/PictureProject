@@ -98,12 +98,13 @@ public class Server {
 	 * @param stat Used to update serverGUI's current status
 	 */
 	public void notifyAllStatus(Status stat) throws IOException{	
+		currentPage++;
 		for( int i = 0; i < Server.MAX_CLIENTS; i++) {
 			try {
 				
 					if(this.clientAddress[i] != null) {					
 						Status st = new Status();
-						st.selectStatus(++currentPage);
+						st.selectStatus(currentPage);
 						System.out.println("Notifying user " + i +" of page change to [" + st.getNum() + "] " + st.getStatus() );		
 						toclient[i].writeObject(st);
 					}
@@ -124,12 +125,15 @@ public class Server {
 		for(int i = 0; i < MAX_CLIENTS; i++){
 			if(clientIDs[i] != null){
 				System.out.println("ID:" + clientIDs[i] + "   STATUS: " + clientStatuses[i] );
-				String timeString = "N/A";
+				
 				//Check time for null
-
+				Long tempTime = 0L;
+				if(clientTimes[i] != null) {
+					tempTime = clientTimes[i];
+				}
 				
 				clients[Integer.parseInt(clientIDs[i])] = "ID:" + clientIDs[i] + "   STATUS: " + clientStatuses[i] + 
-						"   TIME: " + timeString + " sec";
+						"   TIME: " + String.valueOf(tempTime) + " ms";
 				for(int j = 0; j < 24; j++){
 					System.out.print(  "  AMOUNTS: "   +    clientAmts[i][j] + ", ");
 				}

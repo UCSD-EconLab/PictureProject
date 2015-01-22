@@ -310,7 +310,7 @@ public class ServerGUI extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				try{
 					myStatus.selectStatus(++currentPage);
-					System.out.println("myStatus.getStatus(): " + myStatus.getStatus());
+					//System.out.println("myStatus.getStatus(): " + myStatus.getStatus());
 					thisServer.notifyAllStatus(myStatus);
 					pageStatusLabel.setText(myStatus.getStatus());
 				} catch (Exception e1) {
