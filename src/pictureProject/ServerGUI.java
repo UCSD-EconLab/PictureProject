@@ -26,18 +26,24 @@ public class ServerGUI extends JFrame{
 	public static final String[] DECISION_TYPE_NAMES_OPT7 = {"1", "Random"};
 	
 	private Server thisServer;
+	private int currentPage;
 	
 	JPanel mainpanel;
 	JList list;
 	JScrollPane pane;
 	JButton export;
 	JButton next;
+	Status myStatus;
+	private JLabel pageStatusLabel;
 	
 	public ServerGUI(Server server){
 
 		super();
+		myStatus = new Status();
+		myStatus.selectStatus(0);
+		
 		thisServer = server;		
-
+     
 		setSize(WIDTH, HEIGHT);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -303,15 +309,23 @@ public class ServerGUI extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try{
-					thisServer.notifyAllStatus();
+					myStatus.selectStatus(++currentPage);
+					System.out.println("myStatus.getStatus(): " + myStatus.getStatus());
+					thisServer.notifyAllStatus(myStatus);
+					pageStatusLabel.setText(myStatus.getStatus());
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
         });
+        
+        pageStatusLabel = new JLabel(myStatus.getStatus());
+        
         Box bh = Box.createHorizontalBox();
         bh.add(export);
-        bh.add(Box.createHorizontalGlue());
+        bh.add(Box.createHorizontalGlue());        
+        bh.add(pageStatusLabel);
+        bh.add(Box.createHorizontalGlue());        
         bh.add(next);
         
         mainpanel.add(bh);

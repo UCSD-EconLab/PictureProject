@@ -192,8 +192,9 @@ public class Client {
 				while (null != (temp = ois.readObject())) {
 					//Update the status of the client
 					if(Status.class.isInstance(temp)){
-						String statusString = ((Status)temp).getStatus();
-						System.out.println("Status from server: " + statusString);
+						Status myStatus = ((Status)temp);						
+						System.out.println("Status from server: " + ((Status)temp).getStatus() + " : " + myStatus.getNum());
+						clientGUI.selectPage(((Status)temp).getPage());
 					} 
 				}
 			} catch (ClassNotFoundException e) {

@@ -22,6 +22,7 @@ public class ClientGUI extends JFrame{
 	private static final long serialVersionUID = 1L;
 	public static final int WIDTH = 1366;
 	public static final int HEIGHT = 768;
+	public static final int MAX_PAGES = 4;
 	
 	private Vector<JButton> pics = new Vector<JButton>();	
 	private Client client;
@@ -40,6 +41,7 @@ public class ClientGUI extends JFrame{
 	JPanel pText;
 	JPanel pText2;
 	JPanel moneypanel;
+	JPanel[] pages = new JPanel[MAX_PAGES];
 	
 	//for text
 	private JLabel pTextQ;
@@ -53,11 +55,16 @@ public class ClientGUI extends JFrame{
 	private JCheckBox CBoptionB;
 	private ButtonGroup btnGroup;
 	
+//	public enum Page { 
+//		FIRST, SECOND, THIRD, FOURTH
+//	}
+	
 	public ClientGUI(Client c)
 	{
 		System.out.println(c.getBudget());
 		this.budget = c.getBudget();
 		initUI(c);	
+		
 	}
 
 	
@@ -76,38 +83,44 @@ public class ClientGUI extends JFrame{
 		/*
 		 * Construct First Page
 		 */
+		client.sendStatus(new Status("First Page - Begin"));//Update Status on server
 		firstpage = new JPanel();
+		pages[0] = firstpage;// add first page to the pages array
+		
 		add(firstpage);
 		firstpage.setLayout(new BoxLayout(firstpage, BoxLayout.Y_AXIS));
 		firstpage.setPreferredSize(new Dimension(WIDTH,HEIGHT));
 		firstpage.setBackground(Color.WHITE);
 		pack();
 		
-		pTextQ = new JLabel("Please wait for instructions before you press \"Begin\"");
+		pTextQ = new JLabel("Please wait for instructions");// before you press \"Begin\"");
 		firstpage.add(Box.createVerticalStrut(HEIGHT/2));
 		firstpage.add(pTextQ);
 		pTextQ.setAlignmentX(CENTER_ALIGNMENT);
-		client.sendStatus(new Status("First Page - Begin"));//Update Status on server
-		pTextBeginButton = new JButton("Begin");
-		firstpage.add(pTextBeginButton);
+		pTextBeginButton = new JButton("Begin");		
+		//firstpage.add(pTextBeginButton);//REMOVE COMPLETELY
 		pTextBeginButton.setAlignmentX(CENTER_ALIGNMENT);
 
-
+		//firstpage.setVisible(true);// show the first page
+		//TODO: remove
 		pTextBeginButton.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				client.sendStatus(new Status("Second Page - Charity Intro"));//Update Status on server
-				firstpage.setVisible(false);
-				secondpage.setVisible(true);
-			}});
-		firstpage.setVisible(true);
+//				client.sendStatus(new Status("Second Page - Charity Intro"));//Update Status on server
+//				firstpage.setVisible(false);
+//				secondpage.setVisible(true);
+				selectPage(Status.Page.SECOND);
+			}
+		});
+		
+		
 		
 		
 		/*
 		 * Construct Second Page
 		 */
 		secondpage = new JPanel();
+		pages[1] = secondpage;
 		add(secondpage);
 		secondpage.setLayout(new BoxLayout(secondpage, BoxLayout.Y_AXIS));
 		secondpage.setPreferredSize(new Dimension(WIDTH,HEIGHT));
@@ -125,16 +138,20 @@ public class ClientGUI extends JFrame{
 		
 		
 		pTextBeginButton = new JButton("Next");
-		secondpage.add(pTextBeginButton);
+		//secondpage.add(pTextBeginButton);//REMOVE COMPLETELY
 		pTextBeginButton.setAlignmentX(CENTER_ALIGNMENT);
+		
+		//TODO: remove
 		pTextBeginButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				client.sendStatus(new Status("Third Page - Charity Credits"));//Update Status on server
-				secondpage.setVisible(false);
-				thirdpage.setVisible(true);
-			}});
+//				client.sendStatus(new Status("Third Page - Charity Credits"));//Update Status on server
+//				secondpage.setVisible(false);
+//				thirdpage.setVisible(true);
+				selectPage(Status.Page.THIRD);
+			}
+		});
 		secondpage.setVisible(false);
 		
 		
@@ -142,6 +159,7 @@ public class ClientGUI extends JFrame{
 		 * Construct Third Page
 		 */
 		thirdpage = new JPanel();
+		pages[2] = thirdpage;
 		add(thirdpage);
 		thirdpage.setLayout(new BoxLayout(thirdpage, BoxLayout.Y_AXIS));
 		thirdpage.setPreferredSize(new Dimension(WIDTH,HEIGHT));
@@ -159,17 +177,21 @@ public class ClientGUI extends JFrame{
 		
 		
 		pTextBeginButton = new JButton("Next");
-		thirdpage.add(pTextBeginButton);
+		//thirdpage.add(pTextBeginButton);//REMOVE COMPLETELY
 		pTextBeginButton.setAlignmentX(CENTER_ALIGNMENT);
+		
+		//TODO: remove
 		pTextBeginButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				client.sendStatus(new Status("Fourth Page - Selecte a Donatee"));//Update Status on server
-				thirdpage.setVisible(false);
-				fourthpage.setVisible(true);
-				Date date = new Date();
-				client.begin= (new Timestamp(date.getTime())).getTime();
-			}});
+//				client.sendStatus(new Status("Fourth Page - Selecte a Donatee"));//Update Status on server
+//				thirdpage.setVisible(false);
+//				fourthpage.setVisible(true);
+//				Date date = new Date();
+//				client.begin= (new Timestamp(date.getTime())).getTime();
+				selectPage(Status.Page.FOURTH);
+			}
+		});
 		thirdpage.setVisible(false);
 
 		
@@ -177,6 +199,7 @@ public class ClientGUI extends JFrame{
 		 * Construct Forth Page
 		 */
 		fourthpage = new JPanel();
+		pages[3] = fourthpage;
 		add(fourthpage);
 		fourthpage.setLayout(new BoxLayout(fourthpage, BoxLayout.Y_AXIS));
 		fourthpage.setPreferredSize(new Dimension(WIDTH,HEIGHT));
@@ -205,12 +228,13 @@ public class ClientGUI extends JFrame{
 	    	picLabel.setFont(new Font("Serif", Font.BOLD, 20));
 
 	    	ImageIcon icon = new ImageIcon("./downloaded/picture" + i + ".jpg");
-	    	Image img = icon.getImage() ;  
-	    	   Image newimg = img.getScaledInstance( 165, 190,  java.awt.Image.SCALE_SMOOTH ) ;  
-	    	   icon = new ImageIcon( newimg );
+	    	final ImageIcon oldImg = new ImageIcon("./downloaded/picture" + i + ".jpg");
+	    	Image img = icon.getImage();  
+	    	Image newimg = img.getScaledInstance( 165, 190,  java.awt.Image.SCALE_SMOOTH ) ;  
+	    	icon = new ImageIcon( newimg );
 		    //final JButton pic = new JButton((new ImageIcon("./downloaded/picture" + i + ".jpg")));
-	    	   final JButton pic = new JButton(icon);
-	    	   pic.setDisabledIcon(icon);
+	    	final JButton pic = new JButton(icon);
+	    	pic.setDisabledIcon(icon);
 
 		    pic.setName(""+i);
 		    //System.out.println(pic.getName());
@@ -223,7 +247,11 @@ public class ClientGUI extends JFrame{
 
 		    	pic.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-
+						
+//						Image img = oldImg.getImage();  
+//						Image newimg = img.getScaledInstance( 165*2, 190*2,  java.awt.Image.SCALE_SMOOTH );						
+//						pic.setDisabledIcon(new ImageIcon( newimg ));
+						 
 						pic.setEnabled(false);
 						pText2 = new JPanel(); //bottom panel for Money and stuff
 						pText2.setLayout(new BoxLayout(pText2, BoxLayout.Y_AXIS));
@@ -305,7 +333,7 @@ public class ClientGUI extends JFrame{
 	
 //						ArrayList<String> dollarList = new ArrayList<String>();
 				  		
-				  		//Setup the Radio Buttons -Alex Gian
+				  		//Setup the Radio Buttons - Alex Gian
 						int temp = (int)client.getBudget();
 						for(int i = 0; i <= temp; i++){
 							JRadioButton tmpButton = new JRadioButton('$' + (new Integer(i)).toString());
@@ -491,7 +519,7 @@ public class ClientGUI extends JFrame{
 					JLabel pTextTy = new JLabel("Thank you for your payment!");
 					Date date = new Date();
 					client.end = (new Timestamp(date.getTime())).getTime();
-	
+					//TODO: Image Show Center
 					pPics.setVisible(false);
 					pText.removeAll();
 					pText.setBackground(Color.WHITE);
@@ -826,7 +854,45 @@ public class ClientGUI extends JFrame{
 		
 	}
 	
-
+	/**
+	 * Used to select the page to display to the user
+	 * @param pageNumber
+	 */
+	public void selectPage(Status.Page page) {
+		switch(page) {
+			case FIRST:
+				setPageVisible(0);
+				client.sendStatus(new Status("First Page - Begin"));//Update Status on server
+				break;
+			case SECOND:
+				setPageVisible(1);
+				client.sendStatus(new Status("Second Page - Charity Intro"));//Update Status on server
+				break;
+			case THIRD:
+				setPageVisible(2);
+				client.sendStatus(new Status("Third Page - Charity Credits"));//Update Status on server
+				break;
+			case FOURTH:
+				setPageVisible(3);
+				client.sendStatus(new Status("Fourth Page - Selecte a Donatee"));//Update Status on server
+				Date date = new Date();
+				client.begin= (new Timestamp(date.getTime())).getTime();
+				break;
+		default:
+			break;
+		}
+	}
+	
+	private void setPageVisible(int pNum){
+		for (int i = 0; i < MAX_PAGES; i ++) {
+			if( i == pNum ) {
+				pages[pNum].setVisible(true);
+			} else {
+				pages[i].setVisible(false);
+			}
+		}
+	}
+	
 	public Image getImage(String path){
 		URL urlImage = getClass().getResource(path);
 		Image img = Toolkit.getDefaultToolkit().getImage(urlImage);

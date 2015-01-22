@@ -13,13 +13,21 @@ public class Status implements Serializable{
 	 */
 	private static final long serialVersionUID = 8451693364934543448L;
 	private String status;
+	private int num = 0;
 	private Long decTime;
+	
+	public static enum Page { 
+		FIRST, SECOND, THIRD, FOURTH, DEFAULT
+	}
+	
+	public static final int MAX_PAGES = 4;
+	
 	
 	/**
 	 * Status Constructor
 	 */
 	public Status() {
-		status = "Initial";
+		status = "Initial";	
 	}
 	
 	/**
@@ -62,6 +70,81 @@ public class Status implements Serializable{
 	 */
 	public String toString() {
 		return "Status: " + getStatus() + " Time: " + getDecTime();
+	}
+
+	public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+	
+	public String incrementStatus() {		
+		return selectStatus(++num);
+	}
+	
+	public String selectStatus(int i) {
+		setNum(i);
+		
+		String tmp ="";
+		switch(i){
+		case 0:
+			tmp = printStatus(Page.FIRST);
+			break;
+		case 1:
+			tmp = printStatus(Page.SECOND);
+			break;
+		case 2:
+			tmp = printStatus(Page.THIRD);
+			break;
+		case 3: 
+			tmp = printStatus(Page.FOURTH);
+			break;		
+		default: 
+			tmp = printStatus(Page.DEFAULT);
+			break;
+		}
+		return tmp;
+	}
+	
+	public Page getPage() {
+		switch(getNum()){
+		case 0:
+			return Page.FIRST;			
+		case 1:
+			return Page.SECOND;			
+		case 2:
+			return Page.THIRD;			
+		case 3: 
+			return Page.FOURTH;				
+		default: 
+			return Page.DEFAULT;			
+		}
+	}
+	public String printStatus(Page pg) {
+		switch(pg){
+		case FIRST:
+			setStatus("Page 1 - Begin");	
+			setNum(0);
+			break;
+		case SECOND:
+			setStatus("Page 2 - Charity Intro");
+			setNum(1);
+			break;
+		case THIRD:
+			setStatus("Page 3 - Third Page - Charity Credits");
+			setNum(2);
+			break;
+		case FOURTH:
+			setStatus("Page 4 - Selecte a Donatee");
+			setNum(3);
+			break;
+		default:
+			setStatus("User Control");
+			break;
+		}
+		return getStatus();
 	}
 
 }

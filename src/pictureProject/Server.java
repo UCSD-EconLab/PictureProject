@@ -5,13 +5,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
+
+
 
 
 public class Server {
 	
 	public static final int MAX_CLIENTS = 50;
-
+    
+	int currentPage=0;
+	
 	ServerSocket server;
 	StartInfo si = new StartInfo();
 	Pictures pics = new Pictures();
@@ -90,14 +95,24 @@ public class Server {
 	 * Notifies all clients about a status change on the server
 	 * to prompt a page change on the client side
 	 * TODO: Implement socket connection to send message to client
+	 * @param stat Used to update serverGUI's current status
 	 */
-	public void notifyAllStatus() throws IOException{
+	public void notifyAllStatus(Status stat) throws IOException{	
 		for( int i = 0; i < Server.MAX_CLIENTS; i++) {
-			if(this.clientAddress[i] != null) {
-				System.out.println("Notifying user " + i +" of status change.");
-				toclient[i].writeObject(new Status("Hello User: " + i));
+			try {
+				
+					if(this.clientAddress[i] != null) {					
+						Status st = new Status();
+						st.selectStatus(++currentPage);
+						System.out.println("Notifying user " + i +" of page change to [" + st.getNum() + "] " + st.getStatus() );		
+						toclient[i].writeObject(st);
+					}
+				
+			} catch(SocketException se) {
+				System.out.println("SocketException from user: " + i + se.getLocalizedMessage());
 			}
 		}
+		
 	}
 	
 	/*
