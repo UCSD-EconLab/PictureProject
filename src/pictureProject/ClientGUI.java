@@ -54,6 +54,7 @@ public class ClientGUI extends JFrame{
 	private JCheckBox CBoptionA;
 	private JCheckBox CBoptionB;
 	private ButtonGroup btnGroup;
+
 	
 //	public enum Page { 
 //		FIRST, SECOND, THIRD, FOURTH
@@ -235,16 +236,16 @@ public class ClientGUI extends JFrame{
 		    //final JButton pic = new JButton((new ImageIcon("./downloaded/picture" + i + ".jpg")));
 	    	final JButton pic = new JButton(icon);
 	    	pic.setDisabledIcon(icon);
-
+	    	pic.setEnabled(false);
 		    pic.setName(""+i);
 		    //System.out.println(pic.getName());
 		    picLabel.setAlignmentY(TOP_ALIGNMENT);
-		    picLabel.setForeground(Color.GREEN.darker().darker());
+		    picLabel.setForeground(Color.GREEN);
 		    pic.add(picLabel);
 		    
 		    
 		   if(client.getOption() == 1){  //else if option 1, ask how much donation to one picture
-
+/*
 		    	pic.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						
@@ -404,7 +405,7 @@ public class ClientGUI extends JFrame{
 				});	
 		    	
 		    	
-		    	
+*/	    	
 		    }else if(client.getOption() == 2){ // if option 2, ask how much donation to everyone
 		    	
 		    	//text box taken care of at the bottom of the page
@@ -434,7 +435,7 @@ public class ClientGUI extends JFrame{
  		//set up text box accordingly
  		if(client.getOption() == 1){
 
- 			String q_text = "Please select one picture";
+ 			String q_text = "The family with your number will receive your donation.";
  			pText.setBackground(Color.WHITE);
 	    	pTextQ = new JLabel(q_text);
 			pTextQ.setVisible(true);
@@ -874,9 +875,27 @@ public class ClientGUI extends JFrame{
 				break;
 			case FOURTH:
 				setPageVisible(3);
-				client.sendStatus(new Status("Fourth Page - Selecte a Donatee"));//Update Status on server
+				client.sendStatus(new Status("Fourth Page - Families"));//Update Status on server
 				Date date = new Date();
-				client.begin= (new Timestamp(date.getTime())).getTime();
+				//client.begin= (new Timestamp(date.getTime())).getTime();
+				break;
+			case FIFTH:
+				System.out.println("FIFTH PAGE!");
+				client.sendStatus(new Status("Fifth Page - Donatee Selected, Waiting..."));//Update Status on server
+				selectFamily();
+				break;
+			case SIXTH:
+				client.sendStatus(new Status("Sixth Page - Choose Donation"));//Update Status on server
+				if(client.getOption() == 1) {					
+					System.err.println("Timer Begins");
+					fourthpage.remove(pText2);
+					fourthpage.add(pText);
+					fourthpage.revalidate();
+					fourthpage.repaint();
+					pText.setVisible(true);
+					Date date1 = new Date();
+					client.begin= (new Timestamp(date1.getTime())).getTime();
+				}
 				break;
 		default:
 			break;
@@ -1017,6 +1036,144 @@ public class ClientGUI extends JFrame{
 	{
 		Date date = new Date();
 		return new Timestamp(date.getTime()).getTime() - client.begin;
+	}
+	
+	/**
+	 * Select Family
+	 */
+	public void selectFamily(){
+//		pic.setEnabled(false);
+		pText2 = new JPanel(); //bottom panel for Money and stuff
+		pText2.setLayout(new BoxLayout(pText2, BoxLayout.Y_AXIS));
+		pText2.setPreferredSize(new Dimension(WIDTH,168));
+		pText2.setBackground(Color.WHITE);
+		pack();
+
+		JLabel strtStmt = new JLabel("Please Wait");
+		pText2.add(Box.createVerticalGlue());
+		pText2.add(strtStmt);
+		strtStmt.setVisible(true);
+		strtStmt.setAlignmentX(CENTER_ALIGNMENT);
+        
+		
+		// TODO:Remove listener and below
+		// Go to the donation choice screen and start timer
+		JButton strtbtn = new JButton("Next");
+		//pText2.add(strtbtn);
+		pText2.add(Box.createVerticalGlue());
+		strtbtn.setAlignmentX(CENTER_ALIGNMENT);
+		strtbtn.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				System.err.println("Timer Begins");
+				fourthpage.remove(pText2);
+				fourthpage.add(pText);
+				fourthpage.revalidate();
+				fourthpage.repaint();
+				pText.setVisible(true);
+				Date date = new Date();
+				client.begin= (new Timestamp(date.getTime())).getTime();
+			}});
+		// TODO:REMOVE
+		
+		
+		//Date date = new Date();
+		//client.begin = (new Timestamp(date.getTime())).getTime();
+		System.err.println("SIZE: " + pics.size());
+		for(int k = 0; k < pics.size(); k++){
+			if (!pics.get(k).getName().equals(client.id)){
+				System.out.println("Pic Not Equal: "+pics.get(k).getName());
+				if(client.getOption() == 1){
+					pics.get(k).setVisible(false);
+				}
+			}
+		}
+		Vector<Object> v = new Vector<Object>();
+		v.add(Integer.parseInt(client.id));
+		client.setChosenPic(Integer.parseInt(client.id));
+
+		pText.removeAll();
+		pText.setBackground(Color.WHITE);
+		String q_text = "How much would you like to donate to family " + client.getChosenPic() + "?";
+		pTextQ = new JLabel(q_text);
+		pTextQ.setVisible(true);
+		pText.add(Box.createVerticalStrut(168/3));
+		pText.add(pTextQ);
+		pTextQ.setAlignmentX(CENTER_ALIGNMENT);
+
+		moneypanel = new JPanel();	
+		moneypanel.setBackground(Color.WHITE);
+		moneypanel.setAlignmentX(CENTER_ALIGNMENT);
+
+
+		btnGroup = new ButtonGroup();					
+
+		int temp = (int)client.getBudget();
+		for(int i = 0; i <= temp; i++){
+			JRadioButton tmpButton = new JRadioButton('$' + (new Integer(i)).toString());
+			tmpButton.setActionCommand((new Integer(i)).toString());
+			tmpButton.setVerticalTextPosition(JRadioButton.TOP);
+			tmpButton.setHorizontalTextPosition(JRadioButton.CENTER);
+
+			btnGroup.add(tmpButton);
+			moneypanel.add(tmpButton);							
+		}
+
+		pTextOKButton = new JButton("OK");
+		pTextOKButton.addActionListener(new ActionListener() {				  			
+
+
+			@Override
+			public void actionPerformed(ActionEvent e) {								
+				Float payment = (float) 0;
+				//						client.setChosenPayment(Float.parseFloat(((String) pTextCB.getSelectedItem()).replace("$","")) + Float.parseFloat("."+(String) pTextCB2.getSelectedItem()));
+
+				//Check for the selected button and get its value
+				if(btnGroup.getSelection() != null){
+					System.out.println("getSelected(): " + btnGroup.getSelection().getActionCommand());
+					payment = Float.parseFloat(btnGroup.getSelection().getActionCommand());
+				}
+
+				client.setChosenPayment(payment);
+				if(client.getChosenPayment() > budget){
+					JOptionPane.showMessageDialog(fourthpage, "You have exeeeded the budget of $"+budget+".", "Try Again", JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				client.amts[client.getChosenPic()-1] = client.getChosenPayment();
+				JLabel pTextTy = new JLabel("Thank you for your payment!");
+
+				Date date = new Date();
+				client.end = (new Timestamp(date.getTime())).getTime();
+
+				pPics.setVisible(false);
+				pText.removeAll();
+				pText.setBackground(Color.WHITE);
+				pText.add(Box.createVerticalStrut(HEIGHT/2));
+				pTextTy.setAlignmentX(CENTER_ALIGNMENT);
+				pText.add(pTextTy);
+				pText.revalidate();
+				repaint();
+				client.sendData(1);
+			}
+
+			private Object selection() {
+				// TODO Auto-generated method stub
+				return null;
+			}});
+
+		pText.add(Box.createVerticalGlue());
+		pText.add(moneypanel);
+		pText.add(pTextOKButton);
+		pText.add(Box.createVerticalGlue());
+
+		pTextOKButton.setAlignmentX(CENTER_ALIGNMENT);
+
+		fourthpage.remove(pText);
+		fourthpage.add(pText2);
+		fourthpage.revalidate();
+		fourthpage.repaint();
+
+		pText2.setVisible(true);
 	}
 	
 	

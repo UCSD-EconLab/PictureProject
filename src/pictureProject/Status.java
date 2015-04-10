@@ -17,7 +17,7 @@ public class Status implements Serializable{
 	private Long decTime;
 	
 	public static enum Page { 
-		FIRST, SECOND, THIRD, FOURTH, DEFAULT
+		FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, DEFAULT
 	}
 	
 	public static final int MAX_PAGES = 4;
@@ -84,6 +84,12 @@ public class Status implements Serializable{
 		return selectStatus(++num);
 	}
 	
+
+	/**
+	 * Selects a status and returns it.
+	 * @param i
+	 * @return
+	 */
 	public String selectStatus(int i) {
 		setNum(i);
 		
@@ -100,7 +106,13 @@ public class Status implements Serializable{
 			break;
 		case 3: 
 			tmp = printStatus(Page.FOURTH);
-			break;		
+			break;	
+		case 4: 
+			tmp = printStatus(Page.FIFTH);
+			break;	
+		case 5: 
+			tmp = printStatus(Page.SIXTH);
+			break;	
 		default: 
 			tmp = printStatus(Page.DEFAULT);
 			break;
@@ -108,6 +120,10 @@ public class Status implements Serializable{
 		return tmp;
 	}
 	
+	/**
+	 * Get a page
+	 * @return
+	 */
 	public Page getPage() {
 		switch(getNum()){
 		case 0:
@@ -117,11 +133,21 @@ public class Status implements Serializable{
 		case 2:
 			return Page.THIRD;			
 		case 3: 
-			return Page.FOURTH;				
+			return Page.FOURTH;		
+		case 4: 
+			return Page.FIFTH;		
+		case 5: 
+			return Page.SIXTH;		
 		default: 
 			return Page.DEFAULT;			
 		}
 	}
+	
+	/**
+	 * Prints the status
+	 * @param pg
+	 * @return
+	 */
 	public String printStatus(Page pg) {
 		switch(pg){
 		case FIRST:
@@ -139,6 +165,14 @@ public class Status implements Serializable{
 		case FOURTH:
 			setStatus("Page 4 - Selecte a Donatee");
 			setNum(3);
+			break;
+		case FIFTH:
+			setStatus("Page 5");
+			setNum(4);
+			break;
+		case SIXTH:
+			setStatus("Page 6");
+			setNum(5);
 			break;
 		default:
 			setStatus("User Control");

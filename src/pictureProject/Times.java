@@ -1,5 +1,10 @@
 package pictureProject;
 
+/**
+ * I have no idea what this is for. The previous programmers left this here.
+ * @author unknown
+ *
+ */
 public class Times{
 
 	private long[] times = new long[24];

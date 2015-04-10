@@ -23,7 +23,7 @@ public class StartInfo {
 	public void getStartInfo() throws IOException {
 		JFileChooser fc = new JFileChooser();
 		fc.setMultiSelectionEnabled(true);
-		fc.setCurrentDirectory(null);
+		fc.setCurrentDirectory(new File("../"));
 		fc.showDialog(null, "Select Pictures");
 		File[] files = fc.getSelectedFiles();
 		

@@ -8,9 +8,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-
-
-
 public class Server {
 	
 	public static final int MAX_CLIENTS = 50;
